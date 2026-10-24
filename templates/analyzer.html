@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Analyzer</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+
+<div class="card">
+    <h2>Sentiment Analyzer</h2>
+    <form method="POST" action="/analyzer">
+    
+        <textarea name="text" rows="4" cols="40" placeholder="Enter comment here..." required></textarea>
+        <br><br>
+        <button type="submit">Analyze</button>
+    </form>
+
+    {% if result %}
+        <br>
+        {% if result == "Positive" %}
+            <div class="positive">{{ result }}</div>
+        {% elif result == "Negative" %}
+            <div class="negative">{{ result }}</div>
+        {% else %}
+            <div class="neutral">{{ result }}</div>
+        {% endif %}
+    {% endif %}
+
+    <br>
+    <a href="/history">View History</a> |
+    <a href="/dataset">Dataset</a> |
+    <a href="/insights">Insights</a> |
+    <a href="/about">About</a>
+</div>
+
+</body>
+</html>

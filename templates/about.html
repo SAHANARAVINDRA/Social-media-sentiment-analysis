@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>About - Sentiment Analyzer</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+
+<style>
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    background: linear-gradient(135deg, #0f1f3a, #1c355e);
+    color: white;
+    min-height: 100vh;
+    text-align: center;
+}
+
+.container {
+    max-width: 800px;
+    margin: 60px auto;
+    padding: 30px;
+    border-radius: 18px;
+    background: rgba(255,255,255,0.06);
+    box-shadow: 0 8px 25px rgba(0,0,0,0.5);
+    backdrop-filter: blur(6px);
+}
+
+h1 {
+    margin-bottom: 20px;
+}
+
+p {
+    font-size: 18px;
+    line-height: 1.6;
+}
+
+.feature-box {
+    margin-top: 25px;
+    padding: 15px;
+    border-radius: 12px;
+    background: rgba(255,255,255,0.08);
+}
+
+.custom-btn {
+    margin-top: 25px;
+    padding: 10px 20px;
+    border-radius: 25px;
+    font-weight: bold;
+    cursor: pointer;
+    border: none;
+    background: #2d4a73;
+    color: white;
+    transition: 0.3s;
+}
+
+.custom-btn:hover {
+    background: #3f5f8f;
+}
+
+a {
+    text-decoration: none;
+    color: white;
+}
+</style>
+</head>
+
+<body>
+
+<div class="container">
+
+    <h1>About This Project</h1>
+
+    <p>
+        This project is a <b>Social Media Sentiment Analysis System</b> that analyzes user opinions
+        from posts, comments, and text inputs.
+    </p>
+
+    <div class="feature-box">
+        <h3>📊 What it does</h3>
+        <p>
+            The system classifies content into:
+            <br>😊 Positive
+            <br>😐 Neutral
+            <br>😢 Negative
+        </p>
+    </div>
+
+    <div class="feature-box">
+        <h3>⚙️ Technologies Used</h3>
+        <p>
+            Backend: Python, Flask  
+            <br>Frontend: HTML, CSS, JavaScript  
+            <br>Libraries: VADER Sentiment Analyzer, Scikit-learn  
+        </p>
+    </div>
+
+    <div class="feature-box">
+        <h3>🚀 Features</h3>
+        <p>
+            ✔ Analyze text sentiment  
+            <br>✔ Instagram post preview  
+            <br>✔ Image text extraction (OCR)  
+            <br>✔ Dashboard with insights  
+        </p>
+    </div>
+
+    <div class="feature-box">
+        <h3>🎯 Goal</h3>
+        <p>
+            To help users understand public opinion and trends from social media data
+            using AI-based sentiment analysis.
+        </p>
+    </div>
+
+    <a href="/platform">
+        <button class="custom-btn">⬅ Back to Dashboard</button>
+    </a>
+
+</div>
+
+</body>
+</html>

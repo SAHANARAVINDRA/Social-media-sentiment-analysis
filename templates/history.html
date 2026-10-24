@@ -1,0 +1,334 @@
+```html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Analysis History</title>
+
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='css/style.css') }}">
+
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            padding: 25px;
+            font-family: Arial, sans-serif;
+            background: linear-gradient(135deg, #0f1f3a, #1c355e);
+            min-height: 100vh;
+            color: white;
+        }
+
+        .card {
+            width: 100%;
+            max-width: 1300px;
+            margin: 25px auto;
+            padding: 30px;
+            border-radius: 18px;
+            background: rgba(255, 255, 255, 0.07);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.4);
+        }
+
+        h2 {
+            text-align: center;
+            margin-bottom: 25px;
+        }
+
+        .table-container {
+            width: 100%;
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background: rgba(255, 255, 255, 0.04);
+        }
+
+        th, td {
+            padding: 13px;
+            text-align: center;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.12);
+            overflow-wrap: anywhere;
+            vertical-align: middle;
+        }
+
+        th {
+            background: #2d4a73;
+            white-space: nowrap;
+        }
+
+        .history-image {
+            width: 120px;
+            height: 100px;
+            object-fit: cover;
+            border-radius: 10px;
+            border: 2px solid rgba(255, 255, 255, 0.25);
+            cursor: pointer;
+        }
+
+        .no-image {
+            color: #b9c7dc;
+            font-size: 13px;
+        }
+
+        .instagram-link {
+            display: inline-block;
+            margin-top: 6px;
+            color: #ffb4dc;
+            text-decoration: none;
+            font-size: 13px;
+        }
+
+        .instagram-link:hover {
+            color: white;
+            text-decoration: underline;
+        }
+
+        .positive {
+            color: #55e68b;
+            font-weight: bold;
+        }
+
+        .negative {
+            color: #ff7777;
+            font-weight: bold;
+        }
+
+        .neutral {
+            color: #ffd166;
+            font-weight: bold;
+        }
+
+        .unknown {
+            color: #d6dce5;
+        }
+
+        .back-link {
+            display: inline-block;
+            margin-top: 22px;
+            padding: 10px 20px;
+            background: #2d4a73;
+            color: white;
+            text-decoration: none;
+            border-radius: 8px;
+        }
+
+        .back-link:hover {
+            background: #3d6192;
+        }
+
+        .empty {
+            text-align: center;
+            padding: 20px;
+            color: #d6dce5;
+        }
+
+        @media (max-width: 600px) {
+            body {
+                padding: 10px;
+            }
+
+            .card {
+                padding: 15px;
+                margin: 10px auto;
+            }
+
+            th, td {
+                padding: 9px;
+                font-size: 13px;
+            }
+
+            .history-image {
+                width: 90px;
+                height: 75px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+<div class="card">
+
+    <h2>Analysis History</h2>
+
+    {% if history %}
+    <div class="table-container">
+        <table>
+            <thead>
+                <tr>
+                    <th>Time</th>
+                    <th>Platform</th>
+                    <th>Comment / Content / Post Link</th>
+                    <th>Analyzed Image</th>
+                    <th>Sentiment</th>
+                </tr>
+            </thead>
+
+            <tbody>
+                {% for row in history %}
+
+                {% set sentiment = (row[4] or '')|string|trim|lower %}
+                {% set content = (row[2] or '')|string|trim %}
+                {% set image_path = (row[3] or '')|string|trim %}
+                {% set platform_name = (row[1] or '')|string|trim|lower %}
+
+                <tr>
+                    <td>{{ row[0] or 'N/A' }}</td>
+
+                    <td>{{ row[1] or 'N/A' }}</td>
+
+                    <td>
+                        {% if 'instagram.com/' in content.lower() %}
+                            <a href="{{ content }}"
+                               target="_blank"
+                               rel="noopener noreferrer"
+                               class="instagram-link">
+                                View Instagram Post
+                            </a>
+                        {% elif content %}
+                            {{ content }}
+                        {% else %}
+                            N/A
+                        {% endif %}
+                    </td>
+
+                    <td>
+                        {% if image_path %}
+
+                            {% if image_path.startswith('http://') or image_path.startswith('https://') %}
+
+                                {% if 'instagram.com/p/' in image_path.lower()
+                                      or 'instagram.com/reel/' in image_path.lower()
+                                      or 'instagram.com/' in image_path.lower() %}
+
+                                    <a href="{{ image_path }}"
+                                       target="_blank"
+                                       rel="noopener noreferrer"
+                                       class="instagram-link">
+                                        Open Instagram
+                                    </a>
+
+                                {% else %}
+
+                                    <a href="{{ image_path }}"
+                                       target="_blank"
+                                       rel="noopener noreferrer">
+                                        <img
+                                            src="{{ image_path }}"
+                                            alt="Analyzed image"
+                                            class="history-image"
+                                            loading="lazy"
+                                            onerror="this.style.display='none'; this.nextElementSibling.style.display='inline';"
+                                        >
+                                    </a>
+
+                                    <span class="no-image" style="display:none;">
+                                        Image unavailable
+                                    </span>
+
+                                {% endif %}
+
+                            {% elif image_path.startswith('static/') %}
+
+                                <a href="{{ url_for('static', filename=image_path[7:]) }}"
+                                   target="_blank"
+                                   rel="noopener noreferrer">
+                                    <img
+                                        src="{{ url_for('static', filename=image_path[7:]) }}"
+                                        alt="Analyzed image"
+                                        class="history-image"
+                                        loading="lazy"
+                                        onerror="this.parentElement.style.display='none'; this.parentElement.nextElementSibling.style.display='inline';"
+                                    >
+                                </a>
+
+                                <span class="no-image" style="display:none;">
+                                    Image unavailable
+                                </span>
+
+                            {% elif image_path.startswith('uploads/') %}
+
+                                <a href="{{ url_for('static', filename=image_path) }}"
+                                   target="_blank"
+                                   rel="noopener noreferrer">
+                                    <img
+                                        src="{{ url_for('static', filename=image_path) }}"
+                                        alt="Analyzed image"
+                                        class="history-image"
+                                        loading="lazy"
+                                        onerror="this.parentElement.style.display='none'; this.parentElement.nextElementSibling.style.display='inline';"
+                                    >
+                                </a>
+
+                                <span class="no-image" style="display:none;">
+                                    Image unavailable
+                                </span>
+
+                            {% else %}
+
+                                <a href="{{ url_for('static', filename='uploads/' ~ image_path) }}"
+                                   target="_blank"
+                                   rel="noopener noreferrer">
+                                    <img
+                                        src="{{ url_for('static', filename='uploads/' ~ image_path) }}"
+                                        alt="Analyzed image"
+                                        class="history-image"
+                                        loading="lazy"
+                                        onerror="this.parentElement.style.display='none'; this.parentElement.nextElementSibling.style.display='inline';"
+                                    >
+                                </a>
+
+                                <span class="no-image" style="display:none;">
+                                    Image not found
+                                </span>
+
+                            {% endif %}
+
+                        {% else %}
+                            <span class="no-image">No image saved</span>
+                        {% endif %}
+                    </td>
+
+                    <td>
+                        {% if sentiment.startswith('positive') %}
+                            <span class="positive">Positive</span>
+
+                        {% elif sentiment.startswith('negative') %}
+                            <span class="negative">Negative</span>
+
+                        {% elif sentiment.startswith('neutral') %}
+                            <span class="neutral">Neutral</span>
+
+                        {% else %}
+                            <span class="unknown">
+                                {{ row[4] or 'Unknown' }}
+                            </span>
+                        {% endif %}
+                    </td>
+                </tr>
+
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    {% else %}
+        <p class="empty">No analysis history available.</p>
+    {% endif %}
+
+    <div style="text-align: center;">
+        <a href="{{ url_for('platform') }}" class="back-link">
+            Back to Platform
+        </a>
+    </div>
+
+</div>
+</body>
+</html>
+```

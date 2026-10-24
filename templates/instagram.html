@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Instagram Post & Comments Analyzer</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: Arial, sans-serif;
+            background: linear-gradient(135deg, #0f1f3a, #1c355e);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: white;
+        }
+
+        .card {
+            width: 600px;
+            padding: 30px;
+            border-radius: 18px;
+            background: rgba(255, 255, 255, 0.06);
+            backdrop-filter: blur(6px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.5);
+        }
+
+        textarea {
+            width: 100%;
+            padding: 10px;
+            border-radius: 10px;
+            border: none;
+            margin-bottom: 10px;
+        }
+
+        button {
+            padding: 10px 20px;
+            border-radius: 25px;
+            border: none;
+            cursor: pointer;
+            font-weight: bold;
+            background: #2d4a73;
+            color: white;
+        }
+
+        button:hover {
+            background: #3f5f8f;
+        }
+
+        img {
+            width: 100%;
+            border-radius: 15px;
+            margin-top: 15px;
+        }
+
+        .result-box {
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+
+<div class="card">
+    <h2>Instagram Post & Comments Sentiment Analyzer</h2>
+
+    <form method="POST" enctype="multipart/form-data">
+
+        <h3>Upload Post Image</h3>
+        <input type="file" name="image" accept="image/*" required>
+
+        <h3>Post Caption</h3>
+        <textarea name="post" rows="3" required>{{ post_text }}</textarea>
+
+        <h3>Comments (One per line)</h3>
+        <textarea name="comments" rows="6" placeholder="Write each comment on new line..." required>{{ comments_text }}</textarea>
+
+        <br><br>
+        <button type="submit">Analyze</button>
+    </form>
+
+    {% if image_url %}
+        <img src="{{ image_url }}">
+    {% endif %}
+
+    {% if result %}
+        <div class="result-box">
+            <hr>
+            <h3>{{ result }}</h3>
+            <p>Positive: {{ pos }}</p>
+            <p>Negative: {{ neg }}</p>
+            <p>Neutral: {{ neu }}</p>
+        </div>
+    {% endif %}
+
+</div>
+
+</body>
+</html>

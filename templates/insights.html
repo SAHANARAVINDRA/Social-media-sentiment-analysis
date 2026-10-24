@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Insights</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+
+<div class="card">
+    <h2>Sentiment Insights</h2>
+
+    <canvas id="chart"></canvas>
+</div>
+
+<script>
+    const positiveCount = Number("{{ pos }}");
+    const negativeCount = Number("{{ neg }}");
+    const neutralCount = Number("{{ neu }}");
+
+    const ctx = document.getElementById("chart").getContext("2d");
+
+    new Chart(ctx, {
+        type: "bar",
+        data: {
+            labels: ["Positive", "Negative", "Neutral"],
+            datasets: [{
+                label: "Sentiment Count",
+                data: [positiveCount, negativeCount, neutralCount]
+            }]
+        }
+    });
+</script>
+
+</body>
+</html>

@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Register | Social Vision Analyzer</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body class="login-body">
+<div class="login-container">
+    <!-- Left Image Section -->
+    <div class="login-image">
+        <img src="../static/images/logo.jpg" style="width: 50px; height: 50px;" alt="Project Image">
+    </div>
+    <!-- Right Form Section -->
+    <div class="login-form">
+        <h2>Create Your Account</h2>
+        <form method="POST" action="{{ url_for('register') }}">
+            <input type="text" name="username" placeholder="Choose Username" required>
+            <input type="password" name="password" placeholder="Create Password" required>
+            <button type="submit">Register</button>
+        </form>
+        <p class="switch-text">
+            Already have an account?
+            <a href="{{ url_for('login') }}">Back to Login</a>
+        </p>
+
+    </div>
+
+</div>
+
+</body>
+</html>

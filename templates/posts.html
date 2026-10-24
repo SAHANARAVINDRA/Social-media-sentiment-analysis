@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Instagram Post Analyzer</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+
+    <style>
+    body {
+        font-family: Arial, sans-serif;
+        margin: 0;
+        padding: 0;
+        background: linear-gradient(135deg, #0f1f3a, #1c355e);
+        color: white;
+        min-height: 100vh;
+        text-align: center;
+    }
+
+    .post-container {
+        max-width: 600px;
+        margin: 60px auto;
+        padding: 30px;
+        border-radius: 18px;
+        background: rgba(255,255,255,0.06);
+        box-shadow: 0 8px 25px rgba(0,0,0,0.5);
+        backdrop-filter: blur(6px);
+    }
+
+    .custom-btn {
+        padding: 10px 20px;
+        border-radius: 25px;
+        font-weight: bold;
+        cursor: pointer;
+        border: none;
+        background: #2d4a73;
+        color: white;
+        transition: 0.3s;
+    }
+
+    .custom-btn:hover {
+        background: #3f5f8f;
+    }
+
+    .preview-box {
+        width: 350px;
+        height: 450px;
+        margin: 15px auto;
+        background: #111;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 15px;
+        overflow: hidden;
+    }
+
+    .preview-box img,
+    .preview-box iframe {
+        width: 100%;
+        height: 100%;
+        border: none;
+    }
+
+    .result-box {
+        margin-top: 20px;
+        padding: 18px;
+        border-radius: 15px;
+        font-size: 22px;
+        font-weight: bold;
+    }
+
+    .Positive { color: #28a745; }
+    .Negative { color: #dc3545; }
+    .Neutral { color: #ffc107; }
+
+    input[type="text"],
+    input[type="file"] {
+        padding: 10px;
+        width: 90%;
+        border-radius: 10px;
+        border: none;
+        margin-bottom: 15px;
+    }
+
+    hr {
+        margin: 30px 0;
+        border: 0;
+        height: 1px;
+        background: rgba(255,255,255,0.2);
+    }
+
+    a {
+        color: #9fc9ff;
+        text-decoration: none;
+    }
+</style>
+</head>
+
+<body>
+
+<div class="post-container">
+
+    <h2>Instagram Post Analyzer</h2>
+
+    <!-- IMAGE UPLOAD -->
+    <form action="/posts" method="POST" enctype="multipart/form-data">
+        <label><b>Upload Instagram Image</b></label><br><br>
+        <input type="file" name="image" accept="image/jpeg,image/png" required>
+        <br>
+        <button class="custom-btn" type="submit">Upload & Analyze</button>
+    </form>
+
+    <hr>
+
+    {% if image %}
+    <h3>Image Preview</h3>
+    <div class="preview-box">
+        <img src="{{ url_for('static', filename='uploads/' + image) }}">
+    </div>
+    {% endif %}
+
+    {% if extracted_text %}
+    <h4>Extracted Comment</h4>
+    <p style="background:#f8f9fa; color:black; padding:10px; border-radius:8px;">
+        {{ extracted_text }}
+    </p>
+    {% endif %}
+
+    {% if result %}
+    <div class="result-box {{ result }}">
+        {% if result.startswith("Positive") %}
+            😊 Positive
+        {% elif result.startswith("Negative") %}
+            😢 Negative
+        {% else %}
+            😐 Neutral
+        {% endif %}
+    </div>
+    {% endif %}
+
+    <hr>
+
+    <!-- INSTAGRAM URL ANALYZER -->
+    <h3>Analyze Instagram Post URL</h3>
+
+    <input type="text" id="insta_link"
+           placeholder="https://www.instagram.com/p/..." required>
+    <br>
+    <button type="button" class="custom-btn"
+            onclick="analyzeInstagram()">
+        Open & Analyze
+    </button>
+
+    <div id="instaPreview" style="display:none;">
+        <h3>Instagram Preview</h3>
+        <div class="preview-box" id="embedContainer"></div>
+        <div id="instaResult"></div>
+    </div>
+
+    <br>
+    <a href="/platform">Back to Dashboard</a>
+
+</div>
+
+<script>
+function extractShortcode(url) {
+    try {
+        let parts = url.split("/");
+        return parts.includes("p") ? parts[parts.indexOf("p") + 1] : null;
+    } catch {
+        return null;
+    }
+}
+
+function analyzeInstagram() {
+    const link = document.getElementById("insta_link").value.trim();
+
+    if (!link.includes("instagram.com/p/")) {
+        alert("Please enter a valid Instagram post link (must contain /p/)");
+        return;
+    }
+
+    const shortcode = extractShortcode(link);
+
+    if (!shortcode) {
+        alert("Invalid Instagram URL format");
+        return;
+    }
+
+    // Show preview first (no dependency on backend)
+    document.getElementById("instaPreview").style.display = "block";
+
+    document.getElementById("embedContainer").innerHTML =
+        `<iframe src="https://www.instagram.com/p/${shortcode}/embed"
+                 allowfullscreen></iframe>`;
+
+    // Send only shortcode to backend
+    fetch("/analyze_instagram", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify({ shortcode: shortcode })
+    })
+    .then(res => res.json())
+    .then(data => {
+
+        if (data.error) {
+            document.getElementById("instaResult").innerHTML =
+                `<div class="result-box Neutral">
+                    ⚠️ ${data.error}
+                </div>`;
+            return;
+        }
+
+        document.getElementById("instaResult").innerHTML =
+            `<div class="result-box ${data.sentiment}">
+                Sentiment: ${data.sentiment}
+            </div>`;
+    })
+    .catch(() => {
+        document.getElementById("instaResult").innerHTML =
+            `<div class="result-box Neutral">
+                ⚠️ Unable to analyze post
+            </div>`;
+    });
+}
+</script>
+
+</body>
+</html>

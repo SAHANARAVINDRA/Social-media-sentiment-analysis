@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Dashboard</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body class="dashboard-body">
+
+<div class="dashboard-header">
+    <h1>Social Vision Analyzer</h1>
+    <img
+    src="{{ url_for('static', filename='images/logo.jpg') }}"
+    alt="Social Media Sentiment Analyzer"
+    class="logo">
+</div>
+
+<div class="open-section">
+    <a href="{{ url_for('posts') }}" class="feature-btn">Posts</a>
+    <a href="{{ url_for('comments') }}" class="feature-btn">Comments</a>
+    <a href="{{ url_for('history') }}" class="feature-btn">History</a>
+    <a href="{{ url_for('insights') }}" class="feature-btn">Insights</a>
+    <a href="{{ url_for('about') }}" class="feature-btn">About</a>
+</div>
+
+</body>
+</html>
